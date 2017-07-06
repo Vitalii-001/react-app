@@ -17,7 +17,7 @@ class PhotoList extends React.Component {
 					<tbody>
 					<tr>
 						<td>1</td>
-						<td>Mark</td>
+						<td>Marko</td>
 						<td>Otto</td>
 						<td>@mdo</td>
 					</tr>
