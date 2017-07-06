@@ -1,15 +1,15 @@
 import React from 'react';
-import Header from './components/Layout/Header';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Base from './components/Layout/Base';
+import { css } from 'aphrodite/no-important';
+import styles from './AppStyles';
 
 class App extends React.Component {
     render() {
         return (
-            <Router>
-                <Header>
-
-                </Header>
-            </Router>
+            <div className={css(styles.wrapper)}>
+                <Base />
+            </div>
         )
     }
 }
