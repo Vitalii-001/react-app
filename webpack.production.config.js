@@ -13,7 +13,7 @@ loaders.push({
 
 module.exports = {
   entry: [
-    './src/index.jsx',
+    './src/index.tsx',
     './styles/index.scss'
   ],
   output: {
@@ -22,7 +22,7 @@ module.exports = {
     filename: '[chunkhash].js'
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+      extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   module: {
     loaders
