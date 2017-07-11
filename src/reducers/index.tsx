@@ -1,15 +1,11 @@
-import { combineReducers } from 'redux';
-import { assign } from 'lodash';
-import * as routeReducer  from 'react-router-redux';
-// import {routeReducer, syncHistory} from 'react-router-redux';
+import {combineReducers} from 'redux';
+// import { assign } from 'lodash';
 import photos from './photos';
+import { routerReducer } from 'react-router-redux';
+// import {syncHistory} from 'react-router-redux';
 
-// export default combineReducers({
-//     routing : routeReducer,
-//     photos
-// })
 
-export default combineReducers(assign({}, {
-    // routing: routeReducer,
+export default combineReducers({
+    routing: routerReducer,
     photos
-}));
+});

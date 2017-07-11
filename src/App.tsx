@@ -5,7 +5,7 @@ import Base from './components/Layout/Base';
 import PhotoList from './components/PhotoList/PhotoList'
 // import '../styles/index.scss';
 
-class App extends React.Component<Array<number>> {
+class App extends React.Component<any, any> {
     render() {
         return (
             <div>

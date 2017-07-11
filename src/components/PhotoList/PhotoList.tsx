@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Grid, Row, Col, Panel, Button, Table } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { getPhotos } from '../../actions/photos'
+import { Link } from "react-router-dom";
 
 class PhotoList extends React.Component<any, any> {
 
@@ -34,9 +35,7 @@ class PhotoList extends React.Component<any, any> {
                     }
                     </tbody>
                 </Table>
-                <button onClick={this.props.onGetPhotos}>
-                    Get tracks
-                </button>
+                <Link to={`/about`}>about</Link>
             </div>
         )
     }
