@@ -4,25 +4,25 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { createStore, applyMiddleware } from 'redux';
 import App from './App';
-import Base from "./components/Layout/Base";
-import About from './components/About/About'
+import PhotoView from './components/PhotoList/PhotoView/PhotoView'
 import reducer from './reducers';
-import {hashHistory} from 'react-router'
-import {HashRouter, Route, Router } from 'react-router-dom'
-import {syncHistoryWithStore} from 'react-router-redux';
+import { Redirect } from 'react-router'
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import './_shared/styles/_app.scss';
 
 const store = createStore(reducer, applyMiddleware(thunk));
-const history = syncHistoryWithStore(hashHistory, store);
-
 ReactDOM.render(
     <Provider store={store}>
-        <HashRouter>
+        <Router>
             <div>
-                <Router history={history} >
-                    <Route path="/photos" component={App as any} />
-                    <Route path="/about" component={About} />
-                </Router>
+                <Route exact path="/" render={() => <Redirect to="/photos-list"/>} />
+                <Route exact path="/photos-list" component={App} />
+                <Route exact path="/photos-list/:id" component={(props) => <PhotoView required="some string" {...props} />} />
+                <Route exact path="/create-photo" component={PhotoView} />
             </div>
-        </HashRouter>
-    </Provider>,
-    document.querySelector('#app'));
+        </Router>
+    </Provider>
+    ,
+    document.getElementById('app')
+);
+

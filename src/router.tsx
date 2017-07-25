@@ -1,17 +1,17 @@
 // import * as React from 'react';
-// import { Router, Route } from 'react-router';
-// import * as hashHistory from 'react-router';
-// import { App } from './App';
-// // import { About, MembersPage } from './components';
+// import { Switch } from 'react-router-dom';
+// import {
+//     PhotoView
+// } from './pages';
+// import { PropsRoute } from './_shared/components/props-route';
+// import resoleComponent from './_shared/utils/resolve-component';
 //
-// export const AppRouter: React.StatelessComponent<{}> = () => {
-//     return (
-//         <div>
-//             <App />
-//         </div>
-//         // <Router history={hashHistory}>
-//         //     <Route path="/" component={App} >
-//         //     </Route>
-//         // </Router>
-//     );
-// }
+// const Routes = props => (
+//     <Switch>
+//         <PropsRoute exact path="/" component={Home}  {...props}/>
+//         <PropsRoute path="/posts/:id?" component={resoleComponent(PostPreview, Posts, 'id')} {...props} />
+//         <PropsRoute path="/about" component={PhotoView}  {...props}/>
+//     </Switch>
+// );
+//
+// export default Routes;

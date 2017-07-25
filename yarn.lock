@@ -49,7 +49,7 @@
     "@types/react" "*"
     "@types/react-router" "*"
 
-"@types/react-router-redux@^4.0.44":
+"@types/react-router-redux@^4.0.38":
   version "4.0.48"
   resolved "https://registry.yarnpkg.com/@types/react-router-redux/-/react-router-redux-4.0.48.tgz#5c25bfe9bf49b5ac06341e2b37d25344ce364b8d"
   dependencies:

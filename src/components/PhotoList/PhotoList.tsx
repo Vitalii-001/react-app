@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Row, Col, Panel, Button, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { getPhotos } from '../../actions/photos'
 import { Link } from "react-router-dom";
@@ -12,6 +12,11 @@ class PhotoList extends React.Component<any, any> {
     render() {
         return (
             <div className="container">
+                <div className="text-right top-nav">
+                    <Button bsStyle="success">
+                        <Link to={`/create-photo`}>Create photo</Link>
+                    </Button>
+                </div>
                 <Table responsive striped bordered hover>
                     <thead>
                     <tr>
@@ -20,22 +25,33 @@ class PhotoList extends React.Component<any, any> {
                         <th>Pointer</th>
                         <th>Photo Tooltip</th>
                         <th>Created At</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
                     {this.props.photos.map((photo: any, index: any) =>
-                        <tr key={index}>
-                            <td>{photo.id}</td>
-                            <td>{photo.name}</td>
-                            <td>{photo.pointer}</td>
-                            <td>{photo.tooltip}</td>
-                            <td>{photo.createdAt}</td>
-                        </tr>
+                            <tr key={index}>
+                                <td>{photo.id}</td>
+                                <td>
+                                    <Link to={`/photos-list/${photo.id}`}>{photo.name}</Link>
+                                </td>
+                                <td>{photo.pointer}</td>
+                                <td>{photo.tooltip}</td>
+                                <td>{photo.createdAt}</td>
+                                <td>
+                                    <Button bsStyle="warning">
+                                        <Link to={`/photos-list/${photo.id}`}>Edit</Link>
+                                    </Button>
+                                </td>
+                                <td>
+                                    <Button bsStyle="danger">Delete</Button>
+                                </td>
+                            </tr>
                     )
                     }
                     </tbody>
                 </Table>
-                <Link to={`/about`}>about</Link>
             </div>
         )
     }
