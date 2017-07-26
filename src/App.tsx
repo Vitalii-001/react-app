@@ -3,15 +3,13 @@ import { connect } from 'react-redux';
 
 import Base from './components/Layout/Base';
 import PhotoList from './components/PhotoList/PhotoList'
+import Header from "./components/Layout/Header";
 // import '../styles/index.scss';
 
 class App extends React.Component<any, any> {
     render() {
         return (
-            <div>
-                <Base/>
-                <PhotoList/>
-            </div>
+            <PhotoList/>
         )
     }
 }

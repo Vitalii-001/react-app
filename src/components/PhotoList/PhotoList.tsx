@@ -11,26 +11,28 @@ class PhotoList extends React.Component<any, any> {
     }
     render() {
         return (
-            <div className="container">
-                <div className="text-right top-nav">
-                    <Button bsStyle="success">
-                        <Link to={`/create-photo`}>Create photo</Link>
-                    </Button>
-                </div>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Photo Name</th>
-                        <th>Pointer</th>
-                        <th>Photo Tooltip</th>
-                        <th>Created At</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {this.props.photos.map((photo: any, index: any) =>
+            <div className="wrapper">
+                <h1>Photos List</h1>
+                <div className="container">
+                    <div className="text-right top-nav">
+                        <Button bsStyle="success">
+                            <Link to={`/create-photo`}>Create photo</Link>
+                        </Button>
+                    </div>
+                    <Table responsive striped bordered hover>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Photo Name</th>
+                            <th>Pointer</th>
+                            <th>Photo Tooltip</th>
+                            <th>Created At</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {this.props.photos.map((photo: any, index: any) =>
                             <tr key={index}>
                                 <td>{photo.id}</td>
                                 <td>
@@ -48,10 +50,11 @@ class PhotoList extends React.Component<any, any> {
                                     <Button bsStyle="danger">Delete</Button>
                                 </td>
                             </tr>
-                    )
-                    }
-                    </tbody>
-                </Table>
+                        )
+                        }
+                        </tbody>
+                    </Table>
+                </div>
             </div>
         )
     }

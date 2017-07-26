@@ -4,66 +4,98 @@ import { get, maxBy, map } from 'lodash';
 import {Link} from "react-router-dom";
 import { POINTERS } from '../../../_shared/constants/constants';
 
-class PhotoView extends React.Component<any> {
+// interface Preview {
+//     photoPreview: string;
+// }
+
+export default class PhotoView extends React.Component<any> {
+    constructor(props: any) {
+        super(props);
+        console.log(props)
+        this.state = {file: '',imagePreviewUrl: ''};
+    }
+
+    _handleImageChange(e:any) {
+        e.preventDefault();
+
+        let reader = new FileReader();
+        let file = e.target.files[0];
+
+        reader.onloadend = () => {
+            this.setState({
+                file: file,
+                imagePreviewUrl: reader.result
+            });
+        }
+
+        reader.readAsDataURL(file)
+    }
     render() {
+        // let $imagePreview = null;
+        // if (imagePreviewUrl) {
+        //     $imagePreview = (<img src={imagePreviewUrl} />);
+        // } else {
+        //     $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+        // }
         return (
-            <div>
+            <div className="wrapper">
                 <h1>Detail photo</h1>
-                <Form horizontal>
-                    <Col sm={5}>
-                        <FormGroup controlId="formHorizontalName">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Name
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="text" placeholder="Name" />
-                            </Col>
-                        </FormGroup>
+                <div className="container">
+                    <Form horizontal>
+                        <Col sm={6}>
+                            <FormGroup controlId="formHorizontalName">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Name
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="text" placeholder="Name" />
+                                </Col>
+                            </FormGroup>
 
-                        <FormGroup controlId="formHorizontalTooltip">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Tooltip
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="textarea" placeholder="Tooltip" />
-                            </Col>
-                        </FormGroup>
+                            <FormGroup controlId="formHorizontalTooltip">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Tooltip
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="textarea" placeholder="Tooltip" />
+                                </Col>
+                            </FormGroup>
 
-                        <FormGroup controlId="formHorizontalTooltip">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <FormGroup controlId="formHorizontalTooltip">
+                                <label>Check pointer</label>
                                 <ul>
                                     {map(POINTERS, (item, index) => {
                                         return <li key={index}>
-                                            {/*<label htmlFor="pointer_" + {index}">{item}</label>*/}
-                                            {/*<input id="pointer_"{...index} type="radio" name="pointer"/>*/}
+                                            <input id={`pointer_${item}`} type="radio" name="pointer"/>
+                                            <label className="custom-radio" htmlFor={`pointer_${item}`}>{item}</label>
                                         </li>
                                     })}
                                 </ul>
-                                Tooltip
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="textarea" placeholder="tooltip" />
-                            </Col>
-                        </FormGroup>
+                            </FormGroup>
 
-                        <FormGroup>
-                            <Col smOffset={2} sm={10}>
-                                <Checkbox>Remember me</Checkbox>
-                            </Col>
-                        </FormGroup>
+                            <FormGroup>
+                                <Col smOffset={2} sm={10}>
+                                    <Checkbox>Remember me</Checkbox>
+                                </Col>
+                            </FormGroup>
 
-                        <FormGroup>
-                            <Col smOffset={2} sm={10}>
-                                <Button type="submit">
-                                    Sign in
-                                </Button>
-                            </Col>
-                        </FormGroup>
-                    </Col>
-                </Form>
+                            <FormGroup>
+                                <Col smOffset={2} sm={10}>
+                                    <Button type="submit">
+                                        Sign in
+                                    </Button>
+                                </Col>
+                            </FormGroup>
+                        </Col>
+                        <Col sm={6}>
+                            <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
+                            {/*<img src={this.props.imgPreview} alt=""/>*/}
+                        </Col>
+                    </Form>
+                </div>
             </div>
         )
     }
 }
 
-export default PhotoView;
+// export default PhotoView;
