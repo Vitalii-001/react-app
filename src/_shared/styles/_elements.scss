@@ -2,6 +2,17 @@
 label {
     cursor: pointer;
 }
+img {
+  width: auto\9;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+input[type=file] {
+  margin-bottom: 15px;
+}
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
   position: absolute;

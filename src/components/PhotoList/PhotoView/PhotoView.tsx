@@ -11,8 +11,12 @@ import { POINTERS } from '../../../_shared/constants/constants';
 export default class PhotoView extends React.Component<any> {
     constructor(props: any) {
         super(props);
-        console.log(props)
         this.state = {file: '',imagePreviewUrl: ''};
+    }
+    static defaultProps = {
+        model: {
+            id: 0
+        }
     }
 
     _handleImageChange(e:any) {
@@ -30,13 +34,21 @@ export default class PhotoView extends React.Component<any> {
 
         reader.readAsDataURL(file)
     }
+
+    _handleSubmit(e: any) {
+        e.preventDefault();
+
+    }
+
     render() {
-        // let $imagePreview = null;
-        // if (imagePreviewUrl) {
-        //     $imagePreview = (<img src={imagePreviewUrl} />);
-        // } else {
-        //     $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
-        // }
+        let image: any = this.state;
+        let $imagePreview = null;
+        if (image) {
+            console.log($imagePreview)
+            $imagePreview = (<img src={image.imagePreviewUrl} />);
+        } else {
+            $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+        }
         return (
             <div className="wrapper">
                 <h1>Detail photo</h1>
@@ -82,14 +94,14 @@ export default class PhotoView extends React.Component<any> {
                             <FormGroup>
                                 <Col smOffset={2} sm={10}>
                                     <Button type="submit">
-                                        Sign in
+                                        Create photo
                                     </Button>
                                 </Col>
                             </FormGroup>
                         </Col>
                         <Col sm={6}>
                             <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
-                            {/*<img src={this.props.imgPreview} alt=""/>*/}
+                            <img src={image.imagePreviewUrl} alt=""/>
                         </Col>
                     </Form>
                 </div>

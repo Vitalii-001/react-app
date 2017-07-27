@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Base from './components/Layout/Base';
 import PhotoList from './components/PhotoList/PhotoList'
+import PhotoView from './components/PhotoList/PhotoList'
 import Header from "./components/Layout/Header";
 // import '../styles/index.scss';
 
@@ -13,7 +14,6 @@ class App extends React.Component<any, any> {
         )
     }
 }
-// export default App;
 function mapStateToProps (state: any) {
     return {
         testStore: state
