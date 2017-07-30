@@ -10,51 +10,50 @@ class PhotoList extends React.Component<any, any> {
         this.props.onGetPhotos()
     }
     render() {
+        console.log(this.props.photos)
         return (
             <div className="wrapper">
                 <h1>Photos List</h1>
-                <div className="container">
-                    <div className="text-right top-nav">
-                        <Button bsStyle="success">
-                            <Link to={`/create-photo`}>Create photo</Link>
-                        </Button>
-                    </div>
-                    <Table responsive striped bordered hover>
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Photo Name</th>
-                            <th>Pointer</th>
-                            <th>Photo Tooltip</th>
-                            <th>Created At</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.props.photos.map((photo: any, index: any) =>
-                            <tr key={index}>
-                                <td>{photo.id}</td>
-                                <td>
-                                    <Link to={`/photos-list/${photo.id}`}>{photo.name}</Link>
-                                </td>
-                                <td>{photo.pointer}</td>
-                                <td>{photo.tooltip}</td>
-                                <td>{photo.createdAt}</td>
-                                <td>
-                                    <Button bsStyle="warning">
-                                        <Link to={`/photos-list/${photo.id}`}>Edit</Link>
-                                    </Button>
-                                </td>
-                                <td>
-                                    <Button bsStyle="danger">Delete</Button>
-                                </td>
-                            </tr>
-                        )
-                        }
-                        </tbody>
-                    </Table>
+                <div className="text-right top-nav">
+                    <Button bsStyle="success">
+                        <Link to={`/create-photo`}>Create photo</Link>
+                    </Button>
                 </div>
+                <Table responsive striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo Name</th>
+                        <th>Pointer</th>
+                        <th>Photo Tooltip</th>
+                        <th>Created At</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.props.photos.map((photo: any, index: any) =>
+                        <tr key={index}>
+                            <td>{photo.id}</td>
+                            <td>
+                                <Link to={`/photos-list/${photo.id}`}>{photo.name}</Link>
+                            </td>
+                            <td>{photo.pointer}</td>
+                            <td>{photo.tooltip}</td>
+                            <td>{photo.convertDate(photo.createdAt)}</td>
+                            <td>
+                                <Button bsStyle="warning">
+                                    <Link to={`/photos-list/${photo.id}`}>Edit</Link>
+                                </Button>
+                            </td>
+                            <td>
+                                <Button bsStyle="danger">Delete</Button>
+                            </td>
+                        </tr>
+                    )
+                    }
+                    </tbody>
+                </Table>
             </div>
         )
     }

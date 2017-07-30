@@ -1,25 +1,40 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import Header from '../../../components/Layout/Header/Header';
+import { getPhotoById } from '../../../actions/getPhotoById';
 import { FormControl, Form, FormGroup, ControlLabel, Checkbox, Row, Col, Panel, Button, Table } from 'react-bootstrap';
 import { get, maxBy, map } from 'lodash';
 import {Link} from "react-router-dom";
 import { POINTERS } from '../../../_shared/constants/constants';
+import {Photo} from '../../../_shared/models/Photo';
+// import * as Input  from 'antd';
 
 // interface Preview {
 //     photoPreview: string;
 // }
 
-export default class PhotoView extends React.Component<any> {
+class PhotoView extends React.Component<any, any> {
+    public photoModel: Photo;
+    private photoId: number;
+
     constructor(props: any) {
         super(props);
         this.state = {file: '',imagePreviewUrl: ''};
     }
-    static defaultProps = {
-        model: {
-            id: 0
+
+    componentWillMount() {
+        this.photoId = this.props.match.params.id;
+        if (this.photoId) {
+            this.props.onGetPhotoById(this.props.match.params.id);
         }
     }
 
-    _handleImageChange(e:any) {
+    public handleSubmit(e: any) {
+        e.preventDefault();
+
+    }
+
+    private _handleImageChange(e:any) {
         e.preventDefault();
 
         let reader = new FileReader();
@@ -35,79 +50,96 @@ export default class PhotoView extends React.Component<any> {
         reader.readAsDataURL(file)
     }
 
-    _handleSubmit(e: any) {
-        e.preventDefault();
-
-    }
-
     render() {
         let image: any = this.state;
-        let $imagePreview = null;
-        if (image) {
-            console.log($imagePreview)
-            $imagePreview = (<img src={image.imagePreviewUrl} />);
-        } else {
-            $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+        if (this.photoId) {
+            this.photoModel = new Photo(this.props.photo);
+        console.log(this.photoModel)
         }
         return (
-            <div className="wrapper">
-                <h1>Detail photo</h1>
-                <div className="container">
-                    <Form horizontal>
-                        <Col sm={6}>
-                            <FormGroup controlId="formHorizontalName">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Name
-                                </Col>
-                                <Col sm={10}>
-                                    <FormControl type="text" placeholder="Name" />
-                                </Col>
-                            </FormGroup>
+            <div>
+                <Header/>
+                <div className="wrapper">
+                    <h1>Detail photo</h1>
+                    <div className="container">
+                        <Form horizontal onSubmit={this.handleSubmit}>
+                            <Col sm={6}>
+                                <FormGroup controlId="formHorizontalName">
+                                    <Col componentClass={ControlLabel} sm={3}>
+                                        Name
+                                    </Col>
+                                    <Col sm={9}>
+                                        <FormControl
+                                            type="text"
+                                            value={this.photoModel.name}
+                                            placeholder="Name" />
+                                    </Col>
+                                </FormGroup>
 
-                            <FormGroup controlId="formHorizontalTooltip">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Tooltip
-                                </Col>
-                                <Col sm={10}>
-                                    <FormControl type="textarea" placeholder="Tooltip" />
-                                </Col>
-                            </FormGroup>
+                                <FormGroup controlId="formHorizontalTooltip">
+                                    <Col componentClass={ControlLabel} sm={3}>
+                                        Tooltip
+                                    </Col>
+                                    <Col sm={9}>
+                                        <FormControl
+                                            type="textarea"
+                                            value={this.photoModel.tooltip}
+                                            placeholder="Tooltip" />
+                                    </Col>
+                                </FormGroup>
 
-                            <FormGroup controlId="formHorizontalTooltip">
-                                <label>Check pointer</label>
-                                <ul>
-                                    {map(POINTERS, (item, index) => {
-                                        return <li key={index}>
-                                            <input id={`pointer_${item}`} type="radio" name="pointer"/>
-                                            <label className="custom-radio" htmlFor={`pointer_${item}`}>{item}</label>
-                                        </li>
-                                    })}
-                                </ul>
-                            </FormGroup>
+                                <FormGroup controlId="formHorizontalTooltip">
+                                    <Col sm={3}>
+                                        <label className="control-label d-b">Check pointer</label>
+                                    </Col>
+                                    <Col sm={9}>
+                                        <ul className="pointer-list">
+                                            {map(POINTERS, (item, index) => {
+                                                if (this.photoModel.pointer) {
+                                                    return <li key={index}>
+                                                        <input id={`pointer_${item}`}
+                                                               type="radio"
+                                                               value={this.photoModel.pointer}
+                                                               defaultChecked = {item == this.photoModel.pointer}
+                                                               name="pointer"/>
+                                                        <label className="custom-radio" htmlFor={`pointer_${item}`}>{item}</label>
+                                                    </li>
+                                                }
+                                            })}
+                                        </ul>
+                                    </Col>
+                                </FormGroup>
 
-                            <FormGroup>
-                                <Col smOffset={2} sm={10}>
-                                    <Checkbox>Remember me</Checkbox>
-                                </Col>
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Col smOffset={2} sm={10}>
-                                    <Button type="submit">
-                                        Create photo
-                                    </Button>
-                                </Col>
-                            </FormGroup>
-                        </Col>
-                        <Col sm={6}>
-                            <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
-                            <img src={image.imagePreviewUrl} alt=""/>
-                        </Col>
-                    </Form>
+                                <FormGroup>
+                                    <Col smOffset={2} sm={10}>
+                                        <Button type="submit">
+                                            Create photo
+                                        </Button>
+                                    </Col>
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6}>
+                                <label className="fileContainer btn btn-warning">
+                                    Upload Photo
+                                    <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
+                                </label>
+                                <img src={this.photoModel.preview || image.imagePreviewUrl} alt=""/>
+                            </Col>
+                        </Form>
+                    </div>
                 </div>
             </div>
         )
     }
 }
 
-// export default PhotoView;
+export default connect(
+    state => ({
+        photo: state.photo
+    }),
+    dispatch => ({
+        onGetPhotoById: (id: number) => {
+            dispatch(getPhotoById(id))
+        }
+    })
+)(PhotoView);

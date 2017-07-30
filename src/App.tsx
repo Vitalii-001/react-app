@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import Base from './components/Layout/Base';
 import PhotoList from './components/PhotoList/PhotoList'
-import PhotoView from './components/PhotoList/PhotoList'
-import Header from "./components/Layout/Header";
-// import '../styles/index.scss';
+import Header from './components/Layout/Header/Header';
+import PhotoView from './components/PhotoList/PhotoView/PhotoView';
 
 class App extends React.Component<any, any> {
     render() {
         return (
-            <PhotoList/>
+            <div>
+                <Header/>
+                <PhotoList/>
+            </div>
         )
     }
 }
-function mapStateToProps (state: any) {
+function mapStateToProps (state: any, ownProps: any) {
     return {
-        testStore: state
+        store: state,
+        ownProps
     }
 }
 

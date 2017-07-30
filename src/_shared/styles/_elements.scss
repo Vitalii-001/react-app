@@ -63,3 +63,40 @@ input[type=file] {
   -webkit-transform: scale(1);
   transform: scale(1);
 }
+
+// custom input[type=file]
+.fileContainer {
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+  [type=file] {
+    cursor: inherit;
+    display: block;
+    font-size: 999px;
+    filter: alpha(opacity=0);
+    min-height: 100%;
+    min-width: 100%;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+  }
+}
+
+// pointers
+.control-label.d-b {
+  display: block;
+}
+.pointer-list {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0;
+  margin-bottom: 0;
+  padding-top: 10px;
+  li {
+    .custom-radio {
+       margin-bottom: 0;
+    }
+  }
+}

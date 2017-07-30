@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const path = require('path');
 const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -20,7 +21,7 @@ module.exports = [
         name: 'client',
         entry: [
             'react-hot-loader/patch',
-            './src/index.tsx', // your app's entry point
+            './src/index.tsx',
         ],
         devtool: process.env.WEBPACK_DEVTOOL || 'eval-source-map',
         output: {
@@ -36,13 +37,9 @@ module.exports = [
         },
         devServer: {
             contentBase: "./public",
-            // do not print bundle build stats
             noInfo: true,
-            // enable HMR
             hot: true,
-            // embed the webpack-dev-server runtime into the bundle
             inline: true,
-            // serve index.html in place of 404 responses to allow HTML5 history
             historyApiFallback: true,
             port: PORT,
             host: HOST,
@@ -68,6 +65,7 @@ module.exports = [
                     js: [ "bundle.js"],
                 }
             }),
+            new CopyWebpackPlugin([{ from: 'src/assets', to: 'assets' }])
         ]
     }
 ];
