@@ -10,7 +10,6 @@ import { POINTERS } from '../../../_shared/constants/constants';
 import {Photo} from '../../../_shared/models/Photo';
 import { LocalForm, Control, actions } from 'react-redux-form';
 
-
 class PhotoView extends React.Component<any, any> {
     public photoModel: Photo;
     public isEditing = false;
@@ -18,7 +17,7 @@ class PhotoView extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.state = {file: '',imagePreviewUrl: ''};
+        this.state = {file: '',imagePreviewUrl: '', photo: {}};
         this.updateState = this.updateState.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -39,11 +38,19 @@ class PhotoView extends React.Component<any, any> {
         }
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.photo) {
+            this.photoId ? this.photoModel = new Photo(this.props.photo) : this.photoModel = new Photo({});
+            this.setState({
+                photo: this.photoModel
+            });
+            console.log(nextProps)
+        }
+    }
+
     public updateState(e: any) {
         console.log('on update')
-        this.setState({
 
-        });
     }
 
     public handleSubmit(values: any) {
@@ -75,8 +82,7 @@ class PhotoView extends React.Component<any, any> {
 
     render() {
         let image: any = this.state;
-        this.photoId ? this.photoModel = new Photo(this.props.photo) : this.photoModel = new Photo({});
-        console.log(this.photoModel)
+        console.log(this.props)
         return (
             <div>
                 <Header/>
@@ -91,7 +97,9 @@ class PhotoView extends React.Component<any, any> {
                         onUpdate={(form) => this.handleUpdate(form)}
                         onChange={(values) => this.handleChange(values)}
                         onSubmit={(values) => this.handleSubmit(values)}
-                        initialState={this.photoModel}
+                        initialState={{
+                            name : this.state.photo.name
+                        }}
                     >
                         <Col sm={6}>
                             <FormGroup controlId="formHorizontalName" className="clearfix">
@@ -149,13 +157,12 @@ class PhotoView extends React.Component<any, any> {
                                 Upload Photo
                                 <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
                             </label>
-                            <img src={this.photoModel.preview || image.imagePreviewUrl} alt=""/>
+                            <img src={this.state.photo.preview || image.imagePreviewUrl} alt=""/>
                         </Col>
                     </LocalForm>
                 </div>
             </div>
         )
-
     }
 }
 
