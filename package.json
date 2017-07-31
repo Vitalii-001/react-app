@@ -47,7 +47,9 @@
     "redux-thunk": "^2.2.0",
     "sass-loader": "^6.0.2",
     "sequelize": "^4.2.1",
-    "sqlite3": "^3.1.8"
+    "sqlite3": "^3.1.8",
+    "tslint": "^5.5.0",
+    "tslint-react": "^3.1.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.2.1",
