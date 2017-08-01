@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import PhotoList from "./components/PhotoList/PhotoList"
 import Header from "./components/Layout/Header/Header";
-import PhotoView from "./components/PhotoList/PhotoView/PhotoView";
+import PhotoView from "./components/PhotoView/PhotoView";
 
 class App extends React.Component<any, any> {
     public render() {

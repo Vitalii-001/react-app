@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware } from "redux";
 import App from "./App";
-import PhotoView from "./components/PhotoList/PhotoView/PhotoView";
+import PhotoView from "./components/PhotoView/PhotoView";
 import reducer from "./reducers";
 import { Redirect } from "react-router";
 import { BrowserRouter as Router, Route } from "react-router-dom";
