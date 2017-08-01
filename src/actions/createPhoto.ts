@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const createEditPhoto = (data: any) => {
+export const createPhoto = (data: any) => {
     debugger
     return (dispatch: any) => axios.post(`/api/photos`, data)
         .then((response: any) => {

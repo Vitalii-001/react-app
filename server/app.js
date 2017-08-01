@@ -78,9 +78,9 @@ app.route('/api/photos/:photo_id')
         });
     })
     .put(function(req, res){
-        Photo.findById(req.params.product_id).then(function(product){
-            product.update(_.pick(req.body, ['name', 'tooltip', 'pointer', 'preview'])).then(function(product){
-                res.json(product);
+        Photo.findById(req.params.photo_id).then(function(photo){
+            photo.update(_.pick(req.body, ['name', 'pointer', 'tooltip', 'preview'])).then(function(photo){
+                res.json(photo);
             });
         });
     })

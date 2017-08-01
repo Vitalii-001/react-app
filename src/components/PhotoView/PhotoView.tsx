@@ -2,9 +2,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Header from "../Layout/Header/Header";
 import { getPhotoById } from "../../actions/getPhotoById";
-import { createEditPhoto } from "../../actions/createEditPhoto";
+import { editPhoto } from "../../actions/editPhoto";
+import { createPhoto } from "../../actions/createPhoto";
 import { FormControl, Form, FormGroup, ControlLabel, Checkbox, Row, Col, Panel, Button, Table } from "react-bootstrap";
-import { get, maxBy, map } from "lodash";
+import { get, extend, map } from "lodash";
 import { Link } from "react-router-dom";
 import { POINTERS } from "../../_shared/constants/constants";
 import { Photo } from "../../_shared/models/Photo";
@@ -17,17 +18,12 @@ class PhotoView extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.state = {file: "", imagePreviewUrl: "", photo: new Photo({})};
-        this.handleSubmit = this.handleSubmit.bind(this);
-
-        this.handleFullNameChange = this.handleFullNameChange.bind(this);
-        // this.handleFullTooltipChange = this.handleFullTooltipChange.bind(this);
-        // this.handlePointerSelection = this.handlePointerSelection.bind(this);
+        this.state = {photo: new Photo({})};
     }
 
     public componentDidMount() {
-        const photoId = this.props.match.params.id;
-        if (photoId) {
+        this.photoId = this.props.match.params.id;
+        if (this.photoId) {
             this.props.onGetPhotoById(this.props.match.params.id);
             this.isEditing = true;
         }
@@ -116,31 +112,23 @@ class PhotoView extends React.Component<any, any> {
                                 Upload Photo
                                 <input type="file" onChange={(e) => this._handleImageChange(e)}/>
                             </label>
-                            <img src={this.state.photo.preview || this.state.imagePreviewUrl} alt=""/>
+                            <img src={this.state.photo.preview} alt=""/>
                         </Col>
                     </Form>
                 </div>
             </div>
-        )
+        );
     }
 
-    private handleFullNameChange = (e: any) => this.state.photo.name = e.target.value;
-    private handleFullTooltipChange = (e: any) => this.state.photo.tooltip = e.target.value;
-    private handlePointerSelection = (e: any) => this.state.photo.pointer = e.target.value;
+    private handleFullNameChange = (e: any) => this.setState({photo: extend(this.state.photo, {name: e.target.value})});
+    private handleFullTooltipChange = (e: any) => this.setState({photo: extend(this.state.photo, {tooltip: e.target.value})});
+    private handlePointerSelection = (e: any) => this.setState({photo: extend(this.state.photo, {pointer: e.target.value})});
 
     private _handleImageChange(e: any) {
         e.preventDefault();
-
         const reader = new FileReader();
         const file = e.target.files[0];
-
-        reader.onloadend = () => {
-            this.setState({
-                file: file,
-                imagePreviewUrl: reader.result
-            });
-        }
-
+        reader.onloadend = () => this.setState({photo: extend(this.state.photo, {preview: reader.result})});
         reader.readAsDataURL(file);
     }
 
@@ -151,29 +139,37 @@ class PhotoView extends React.Component<any, any> {
         return <Button bsStyle="success" type="submit">Create photo</Button>;
     }
 
-    private handleSubmit(e: any) {
+    private handleSubmit = (e: any) => {
         e.preventDefault();
         const params =  {
             name: this.state.photo.name,
             tooltip: this.state.photo.tooltip,
             pointer: this.state.photo.pointer,
-            preview: this.state.imagePreviewUrl,
+            preview: this.state.photo.preview,
         };
-        this.props.onCreateEditPhoto(params);
+        this.props.onCreateEditPhoto(params, this.photoId);
     }
 
 }
 
+function mapStateToProps(state: any) {
+    return {
+        photo: state.getPhotoById,
+    };
+}
+
 export default connect(
-    state => ({
-        photo: state.getPhotoById
-    }),
+    mapStateToProps,
     dispatch => ({
         onGetPhotoById: (id: number) => {
             dispatch(getPhotoById(id))
         },
-        onCreateEditPhoto: (data: {}) => {
-            dispatch(createEditPhoto(data))
+        onCreateEditPhoto: (data: {}, photoId: number) => {
+            if (photoId) {
+                dispatch(editPhoto(data, photoId))
+            } else {
+                dispatch(createPhoto(data))
+            }
         }
     })
 )(PhotoView);

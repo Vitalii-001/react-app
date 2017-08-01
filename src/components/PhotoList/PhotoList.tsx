@@ -81,10 +81,14 @@ class PhotoList extends React.Component<any, any> {
     }
 }
 
-export default connect(
-    state => ({
+function mapStateToProps(state: any) {
+    return {
         photoList: state.photoList,
-    }),
+    };
+}
+
+export default connect(
+    mapStateToProps,
     dispatch => ({
         onGetPhotos: () => {
             dispatch(getPhotoList());
