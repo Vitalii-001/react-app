@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import * as moment from "moment";
 
 export class Photo {
     name: string;
@@ -9,6 +9,6 @@ export class Photo {
          Object.assign(this, data);
     }
     public convertDate(date: string) {
-        return moment(date).format('DD-MMM-YY HH:mm:ss');
+        return moment(date).format("DD-MMM-YY HH:mm:ss");
     }
 }

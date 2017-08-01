@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import Header from '../../../components/Layout/Header/Header';
-import { getPhotoById } from '../../../actions/getPhotoById';
-import { createEditPhoto } from '../../../actions/createEditPhoto';
-import { FormControl, Form, FormGroup, ControlLabel, Checkbox, Row, Col, Panel, Button, Table } from 'react-bootstrap';
-import { get, maxBy, map } from 'lodash';
-import {Link} from "react-router-dom";
-import { POINTERS } from '../../../_shared/constants/constants';
-import {Photo} from '../../../_shared/models/Photo';
-import { LocalForm, Control, actions } from 'react-redux-form';
+import * as React from "react";
+import { connect } from "react-redux";
+import Header from "../../../components/Layout/Header/Header";
+import { getPhotoById } from "../../../actions/getPhotoById";
+import { createEditPhoto } from "../../../actions/createEditPhoto";
+import { FormControl, Form, FormGroup, ControlLabel, Checkbox, Row, Col, Panel, Button, Table } from "react-bootstrap";
+import { get, maxBy, map } from "lodash";
+import { Link } from "react-router-dom";
+import { POINTERS } from "../../../_shared/constants/constants";
+import { Photo } from "../../../_shared/models/Photo";
+// import { LocalForm, Control, actions } from "react-redux-form";
 
 class PhotoView extends React.Component<any, any> {
     public photoModel: Photo;
@@ -17,72 +17,31 @@ class PhotoView extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.state = {file: '',imagePreviewUrl: '', photo: {}};
-        this.updateState = this.updateState.bind(this);
+        this.state = {file: "", imagePreviewUrl: "", photo: new Photo({})};
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleFullNameChange = this.handleFullNameChange.bind(this);
+        // this.handleFullTooltipChange = this.handleFullTooltipChange.bind(this);
+        // this.handlePointerSelection = this.handlePointerSelection.bind(this);
     }
 
-    handleChange(values: any) {
-        console.log('on change', values)
-    }
-
-    handleUpdate(form: any) {
-        console.log('handle update', form)
-    }
-
-    componentDidMount() {
-        this.photoId = this.props.match.params.id;
-        if (this.photoId) {
+    public componentDidMount() {
+        const photoId = this.props.match.params.id;
+        if (photoId) {
             this.props.onGetPhotoById(this.props.match.params.id);
             this.isEditing = true;
         }
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    public componentWillReceiveProps(nextProps: any) {
         if (nextProps.photo) {
-            this.photoId ? this.photoModel = new Photo(this.props.photo) : this.photoModel = new Photo({});
             this.setState({
-                photo: this.photoModel
-            });
-            console.log(nextProps)
-        }
-    }
-
-    public updateState(e: any) {
-        console.log('on update')
-
-    }
-
-    public handleSubmit(values: any) {
-        let params =  {
-            name: values.name,
-            tooltip: values.tooltip,
-            pointer: values.pointer,
-            preview: this.state.imagePreviewUrl
-        };
-        this.props.onCreateEditPhoto(params);
-    }
-
-    private _handleImageChange(e: any) {
-        e.preventDefault();
-
-        let reader = new FileReader();
-        let file = e.target.files[0];
-
-        reader.onloadend = () => {
-            this.setState({
-                file: file,
-                imagePreviewUrl: reader.result
+                photo: nextProps.photo,
             });
         }
-
-        reader.readAsDataURL(file)
     }
 
-
-    render() {
-        let image: any = this.state;
-        console.log(this.props)
+    public render() {
         return (
             <div>
                 <Header/>
@@ -90,40 +49,40 @@ class PhotoView extends React.Component<any, any> {
                     <h1>Detail photo</h1>
                     <div className="back-to">
                         <Button bsStyle="primary">
-                            <Link to={`/photos-list`}>Back to photos list</Link>
+                            <Link to={"/photos-list"}>Back to photos list</Link>
                         </Button>
                     </div>
-                    <LocalForm
-                        onUpdate={(form) => this.handleUpdate(form)}
-                        onChange={(values) => this.handleChange(values)}
-                        onSubmit={(values) => this.handleSubmit(values)}
-                        initialState={{
-                            name : this.state.photo.name
-                        }}
-                    >
+                    <Form horizontal onSubmit={this.handleSubmit}>
                         <Col sm={6}>
-                            <FormGroup controlId="formHorizontalName" className="clearfix">
+                            <FormGroup controlId="formHorizontalName">
                                 <Col componentClass={ControlLabel} sm={3}>
                                     Name
                                 </Col>
                                 <Col sm={9}>
-                                    <Control.text
-                                        id="formHorizontalName"
-                                        className="form-control"
-                                        model=".name" />
+                                    <FormControl
+                                        type="text"
+                                        value={this.state.photo.name}
+                                        content={this.state.photo.name}
+                                        onChange={this.handleFullNameChange}
+                                        placeholder="Name" />
                                 </Col>
                             </FormGroup>
 
-                            <FormGroup controlId="formHorizontalTooltip" className="clearfix">
+                            <FormGroup controlId="formHorizontalTooltip">
                                 <Col componentClass={ControlLabel} sm={3}>
                                     Tooltip
                                 </Col>
                                 <Col sm={9}>
-                                    <Control.textarea id="formHorizontalTooltip" className="form-control" model=".tooltip" />
+                                    <FormControl
+                                        type="textarea"
+                                        value={this.state.photo.tooltip}
+                                        content={this.state.photo.name}
+                                        onChange={this.handleFullTooltipChange}
+                                        placeholder="Tooltip" />
                                 </Col>
                             </FormGroup>
 
-                            <FormGroup controlId="formHorizontalTooltip" className="clearfix">
+                            <FormGroup controlId="formHorizontalTooltip">
                                 <Col sm={3}>
                                     <label className="control-label d-b">Check pointer</label>
                                 </Col>
@@ -132,10 +91,12 @@ class PhotoView extends React.Component<any, any> {
                                         {map(POINTERS, (item, index) => {
                                             // if (this.photoModel.pointer) {
                                             return <li key={index}>
-                                                <Control.radio id={`pointer_${item}`}
-                                                               model=".pointer"
-                                                               value={item}
-                                                               name="pointer" />
+                                                <input id={`pointer_${item}`}
+                                                       type={"radio"}
+                                                       value={item}
+                                                       onChange={this.handlePointerSelection}
+                                                       checked = {this.state.photo.pointer === item}
+                                                       name="pointer"/>
                                                 <label className="custom-radio" htmlFor={`pointer_${item}`}>{item}</label>
                                             </li>
                                             // }
@@ -146,24 +107,61 @@ class PhotoView extends React.Component<any, any> {
 
                             <FormGroup className="clearfix text-right">
                                 <Col smOffset={2} sm={10}>
-                                    <Button bsStyle="success" type="submit">
-                                        Create photo
-                                    </Button>
+                                    {this.createEditBtn()}
                                 </Col>
                             </FormGroup>
                         </Col>
                         <Col sm={6}>
                             <label className="fileContainer btn btn-warning">
                                 Upload Photo
-                                <input type="file" onChange={(e)=>this._handleImageChange(e)}/>
+                                <input type="file" onChange={(e) => this._handleImageChange(e)}/>
                             </label>
-                            <img src={this.state.photo.preview || image.imagePreviewUrl} alt=""/>
+                            <img src={this.state.photo.preview || this.state.imagePreviewUrl} alt=""/>
                         </Col>
-                    </LocalForm>
+                    </Form>
                 </div>
             </div>
         )
     }
+
+    private handleFullNameChange = (e: any) => this.state.photo.name = e.target.value;
+    private handleFullTooltipChange = (e: any) => this.state.photo.tooltip = e.target.value;
+    private handlePointerSelection = (e: any) => this.state.photo.pointer = e.target.value;
+
+    private _handleImageChange(e: any) {
+        e.preventDefault();
+
+        const reader = new FileReader();
+        const file = e.target.files[0];
+
+        reader.onloadend = () => {
+            this.setState({
+                file: file,
+                imagePreviewUrl: reader.result
+            });
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+    private createEditBtn() {
+        if (this.props.match.params.id) {
+            return <Button bsStyle="success" type="submit">Edit photo</Button>;
+        }
+        return <Button bsStyle="success" type="submit">Create photo</Button>;
+    }
+
+    private handleSubmit(e: any) {
+        e.preventDefault();
+        const params =  {
+            name: this.state.photo.name,
+            tooltip: this.state.photo.tooltip,
+            pointer: this.state.photo.pointer,
+            preview: this.state.imagePreviewUrl,
+        };
+        this.props.onCreateEditPhoto(params);
+    }
+
 }
 
 export default connect(
