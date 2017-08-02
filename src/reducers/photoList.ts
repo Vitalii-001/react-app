@@ -1,8 +1,7 @@
-const initialState: any = [];
-
-export default function photoList(state = initialState, action: any) {
-    if (action.type === 'FETCH_PHOTOS_SUCCESS') {
-        return action.payload
+export default function photoList(state: any = null, action: any) {
+    switch(action.type) {
+        case "FETCH_PHOTOS_SUCCESS":
+            return action.payload;
     }
-    return state
+    return state;
 }

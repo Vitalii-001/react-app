@@ -49,7 +49,7 @@ class PhotoList extends React.Component<any, any> {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.props.photoList.map((photo: any, index: any) =>
+                    {this.state.photoList.map((photo: any, index: any) =>
                         <tr key={index}>
                             <td>{photo.id}</td>
                             <td>
@@ -62,7 +62,7 @@ class PhotoList extends React.Component<any, any> {
                             </td>
                             <td>{photo.pointer}</td>
                             <td>{photo.tooltip}</td>
-                            <td>{photo.convertDate(photo.createdAt)}</td>
+                            <td>{photo.created_at}</td>
                             <td>
                                 <Button bsStyle="warning">
                                     <Link to={`/photos-list/${photo.id}`}>Edit</Link>

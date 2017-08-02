@@ -62,7 +62,6 @@
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "no-var-requires": true,
-    "object-literal-sort-keys": true,
     "one-line": [
       true,
       "check-open-brace",
@@ -72,19 +71,12 @@
     ],
     "quotemark": [
       true,
-      "double",
+      "single",
       "avoid-escape"
     ],
     "radix": true,
     "semicolon": true,
     "switch-default": true,
-    "trailing-comma": [
-      true,
-      {
-        "multiline": "always",
-        "singleline": "never"
-      }
-    ],
     "triple-equals": [
       true,
       "allow-null-check"
