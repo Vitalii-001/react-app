@@ -1,13 +1,13 @@
-export default function createPhoto(state: any = null, action: any) {
+export default function removePhoto(state: any = null, action: any) {
     switch(action.type) {
-        case 'PHOTO_CREATED_LOADING':
+        case 'PHOTO_DELETED_LOADING':
             return Object.assign({}, state, {
-                isFetching: true,
+                isDeleting: true,
                 didInvalidate: false
             });
-        case 'PHOTO_CREATED_SUCCESS':
+        case 'DELETE_PHOTO_SUCCESS':
             return Object.assign({}, state, {
-                isFetching: false,
+                isDeleting: false,
                 didInvalidate: false,
                 items: action.payload,
                 lastUpdated: action.receivedAt

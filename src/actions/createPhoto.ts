@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const createPhoto = (data: any) =>
     (dispatch: any) => {
-        dispatch({type: "PHOTO_CREATED_LOADING"})
+        dispatch({type: 'PHOTO_CREATED_LOADING'});
         return axios.post(`/api/photos`, data)
             .then((response: any) => {
-                dispatch({type: "PHOTO_CREATED_SUCCESS", payload: response.data})
+                dispatch({type: 'PHOTO_CREATED_SUCCESS', payload: response.data});
             })
             .catch(function (error: any) {
                 console.log(error);
             });
-    }
+    };

@@ -4,7 +4,7 @@ import Header from '../Layout/Header/Header';
 import { getPhotoById } from '../../actions/getPhotoById';
 import { editPhoto } from '../../actions/editPhoto';
 import { createPhoto } from '../../actions/createPhoto';
-import { FormControl, Form, FormGroup, ControlLabel, Checkbox, Row, Col, Panel, Button, Table } from 'react-bootstrap';
+import { FormControl, Form, FormGroup, ControlLabel, Col, Button } from 'react-bootstrap';
 import { extend, map } from 'lodash';
 import { Link } from 'react-router-dom';
 import { POINTERS } from '../../_shared/constants/constants';
@@ -45,10 +45,10 @@ class PhotoView extends React.Component<any, any> {
     public render() {
         return (
             <div>
-                <div>{this.state.createPhoto.isFetching ? <div id='loader-wrapper'><div id='loader'></div></div> : <div></div>}</div>
+                <div>{this.state.createPhoto.isFetching ? <div id='loader-wrapper'><div id='loader'>Loading...</div></div> : ''}</div>
                 <Header/>
                 <div className='wrapper clearfix'>
-                    <h1>Detail photo</h1>
+                    {this.createEditTitle()}
                     <div className='back-to'>
                         <Button bsStyle='primary'>
                             <Link to={'/photos-list'}>Back to photos list</Link>
@@ -91,7 +91,6 @@ class PhotoView extends React.Component<any, any> {
                                 <Col sm={9}>
                                     <ul className='pointer-list'>
                                         {map(POINTERS, (item, index) => {
-                                            // if (this.photoModel.pointer) {
                                             return <li key={index}>
                                                 <input id={`pointer_${item}`}
                                                        type={'radio'}
@@ -100,8 +99,7 @@ class PhotoView extends React.Component<any, any> {
                                                        checked = {this.state.photo.pointer === item}
                                                        name='pointer'/>
                                                 <label className='custom-radio' htmlFor={`pointer_${item}`}>{item}</label>
-                                            </li>
-                                            // }
+                                            </li>;
                                         })}
                                     </ul>
                                 </Col>
@@ -143,6 +141,13 @@ class PhotoView extends React.Component<any, any> {
             return <Button bsStyle='success' type='submit'>Edit photo</Button>;
         }
         return <Button bsStyle='success' type='submit'>Create photo</Button>;
+    }
+
+    private createEditTitle() {
+        if (this.props.match.params.id) {
+            return <h1>Edit photo</h1>;
+        }
+        return <h1>Create photo</h1>;
     }
 
     private handleSubmit = (e: any) => {

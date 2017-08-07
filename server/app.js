@@ -77,13 +77,20 @@ app.route('/api/photos/:photo_id')
             res.json(photo);
         });
     })
+    .delete(function(req, res){
+        Photo.findById(req.params.photo_id).then(function(photo){
+            photo.destroy().then(function(photo){
+                res.json(photo);
+            });
+        });
+    })
     .put(function(req, res){
         Photo.findById(req.params.photo_id).then(function(photo){
             photo.update(_.pick(req.body, ['name', 'pointer', 'tooltip', 'preview'])).then(function(photo){
                 res.json(photo);
             });
         });
-    })
+    });
 
 
 // Setup logger
