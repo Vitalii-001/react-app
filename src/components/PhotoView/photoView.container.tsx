@@ -1,52 +1,61 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import Header from '../Layout/Header/Header';
-import { getPhotoById } from '../../actions/getPhotoById';
-import { editPhoto } from '../../actions/editPhoto';
-import { createPhoto } from '../../actions/createPhoto';
+import { getPhotoById } from './actions/getPhotoById.action';
+import { editPhoto } from './actions/editPhoto.action';
+import { createPhoto } from './actions/createPhoto.action';
 import { FormControl, Form, FormGroup, ControlLabel, Col, Button } from 'react-bootstrap';
 import { extend, map } from 'lodash';
 import { Link } from 'react-router-dom';
 import { POINTERS } from '../../_shared/constants/constants';
-import { Photo } from '../../_shared/models/Photo';
-import { push } from 'react-router-redux';
+import {Photo} from '../../_shared/models/Photo';
 
 
 class PhotoView extends React.Component<any, any> {
     private photoId: number;
+    private statePreloader: boolean = false;
 
     constructor(props: any) {
         super(props);
-        this.state = {photo: new Photo({}), createPhoto: {isFetching: false}};
+        this.state = {
+            photo: new Photo({}),
+            photoIsCreating: {isCreating: false},
+            photoIsEditing: {isEditing: false}
+        };
     }
 
     public componentDidMount() {
+        console.log('componentDidMount state', this.state)
         this.photoId = this.props.match.params.id;
         if (this.photoId) {
             this.props.onGetPhotoById(this.props.match.params.id);
         }
     }
 
-    public componentDidUpdate(nextProps: any) {
-        if (nextProps.createPhoto) {
-            // if (nextProps.createPhoto.isFetching) {this.props.dispatch(push('/photos-list'))}
-        }
-    }
-
     public componentWillReceiveProps(nextProps: any) {
-        if (nextProps.photo) {
+        console.log('componentWillReceiveProps', nextProps)
+        if (nextProps.photoIsCreating) {
+            this.statePreloader = nextProps.photoIsCreating.isCreating;
+        }
+        if (nextProps.match.params.id) {
             this.setState({
                 photo: nextProps.photo,
-                createPhoto: nextProps.createPhoto
             });
+        } else {
+            this.setState({
+                photo: new Photo({})
+            });
+        }
+        if (nextProps.photoIsEditing) {
+            this.statePreloader = nextProps.photoIsEditing.isEditing;
         }
     }
 
     public render() {
+        console.log('render', this.props)
         return (
             <div>
-                <div>{this.state.createPhoto.isFetching ? <div id='loader-wrapper'><div id='loader'>Loading...</div></div> : ''}</div>
-                <Header/>
+                {this.preloader()}
                 <div className='wrapper clearfix'>
                     {this.createEditTitle()}
                     <div className='back-to'>
@@ -63,8 +72,7 @@ class PhotoView extends React.Component<any, any> {
                                 <Col sm={9}>
                                     <FormControl
                                         type='text'
-                                        value={this.state.photo.name}
-                                        content={this.state.photo.name}
+                                        value={this.state.photo.name || ''}
                                         onChange={this.handleFullNameChange}
                                         placeholder='Name' />
                                 </Col>
@@ -77,7 +85,7 @@ class PhotoView extends React.Component<any, any> {
                                 <Col sm={9}>
                                     <FormControl
                                         type='textarea'
-                                        value={this.state.photo.tooltip}
+                                        value={this.state.photo.tooltip || ''}
                                         content={this.state.photo.name}
                                         onChange={this.handleFullTooltipChange}
                                         placeholder='Tooltip' />
@@ -112,10 +120,12 @@ class PhotoView extends React.Component<any, any> {
                             </FormGroup>
                         </Col>
                         <Col sm={6}>
-                            <label className='fileContainer btn btn-warning'>
-                                Upload Photo
-                                <input type='file' onChange={(e) => this._handleImageChange(e)}/>
-                            </label>
+                            <div>
+                                <label className='fileContainer btn btn-warning'>
+                                    Upload Photo
+                                    <input type='file' onChange={(e) => this._handleImageChange(e)}/>
+                                </label>
+                            </div>
                             <img src={this.state.photo.preview} alt=''/>
                         </Col>
                     </Form>
@@ -127,6 +137,12 @@ class PhotoView extends React.Component<any, any> {
     private handleFullNameChange = (e: any) => this.setState({photo: extend(this.state.photo, {name: e.target.value})});
     private handleFullTooltipChange = (e: any) => this.setState({photo: extend(this.state.photo, {tooltip: e.target.value})});
     private handlePointerSelection = (e: any) => this.setState({photo: extend(this.state.photo, {pointer: e.target.value})});
+
+    private preloader() {
+        if (this.statePreloader) {
+            return <div id='loader-wrapper'><div id='loader'></div></div>;
+        }
+    }
 
     private _handleImageChange(e: any) {
         e.preventDefault();
@@ -160,14 +176,14 @@ class PhotoView extends React.Component<any, any> {
         };
         this.props.onCreateEditPhoto(params, this.photoId);
     }
-
 }
 
 function mapStateToProps(state: any) {
-    console.log(state)
+    console.log('state', state)
     return {
         photo: state.getPhotoById,
-        createPhoto: state.createPhoto
+        photoIsCreating: state.createPhoto,
+        photoIsEditing: state.editPhoto
     };
 }
 
@@ -175,13 +191,13 @@ export default connect(
     mapStateToProps,
     dispatch => ({
         onGetPhotoById: (id: number) => {
-            dispatch(getPhotoById(id))
+            dispatch(getPhotoById(id));
         },
         onCreateEditPhoto: (data: {}, photoId: number) => {
             if (photoId) {
-                dispatch(editPhoto(data, photoId))
+                dispatch(editPhoto(data, photoId));
             } else {
-                dispatch(createPhoto(data))
+                dispatch(createPhoto(data));
             }
         }
     })

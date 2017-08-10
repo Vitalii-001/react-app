@@ -1,17 +1,17 @@
-export default function createPhoto(state: any = null, action: any) {
+export default function photoList(state: any = null, action: any) {
     switch(action.type) {
-        case 'PHOTO_CREATED_LOADING':
+        case 'PHOTO_LIST_LOADING':
             return Object.assign({}, state, {
-                isFetching: true,
+                isLoadingList: true,
                 didInvalidate: false
             });
-        case 'PHOTO_CREATED_SUCCESS':
+        case 'FETCH_PHOTOS_SUCCESS':
             return Object.assign({}, state, {
-                isFetching: false,
+                isLoadingList: false,
                 didInvalidate: false,
                 items: action.payload,
                 lastUpdated: action.receivedAt
             });
     }
-    return state
+    return state;
 }

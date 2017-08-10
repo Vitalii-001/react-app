@@ -1,16 +1,21 @@
 import * as React from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { getPhotoList } from '../../actions/photoList';
-import { removePhoto } from '../../actions/removePhoto';
+import { getPhotoList } from './actions/photoList.action';
+import { removePhoto } from './actions/removePhoto.action';
 import { Link } from 'react-router-dom';
 import {Photo} from '../../_shared/models/Photo';
 
 class PhotoList extends React.Component<any, any> {
+    private statePreloader: boolean = false;
+
     constructor(props: any) {
         super(props);
         this.state = {
-            photoList: [],
+            photoList: {
+                isLoadingList: false,
+                items: [{}]
+            },
             deleted: [],
             removePhoto: {isDeleting: false}
         };
@@ -22,13 +27,15 @@ class PhotoList extends React.Component<any, any> {
     }
 
     public componentWillReceiveProps(nextProps: any) {
-        if (nextProps.photoList) {
-            console.log(nextProps)
+        this.statePreloader = nextProps.photoList.isLoadingList;
+        console.log(nextProps.photoList)
+        if (nextProps.photoList.items) {
             this.setState({
                 photoList: nextProps.photoList,
             });
         }
         if (nextProps.removePhoto) {
+            this.statePreloader = nextProps.removePhoto.isDeleting;
             this.setState({
                 removePhoto: nextProps.removePhoto
             });
@@ -38,14 +45,28 @@ class PhotoList extends React.Component<any, any> {
     public removePhoto(photoId: number) {
         this.setState({ deleted: this.state.deleted.concat([photoId]) });
         this.props.onRemovePhoto(photoId);
+        console.log(this.state.deleted);
     }
 
     public render() {
-        console.log(this.state);
-        if (this.state.photoList.length) {
+        console.log(this.state.photoList);
+        if (!this.state.photoList.items.length) {
             return (
                 <div>
-                    <div>{this.state.removePhoto.isDeleting ? <div id='loader-wrapper'><div id='loader'>Loading...</div></div> : ''}</div>
+                    {this.preloader()}
+                    <div className='wrapper'>
+                        <h1>Empty list of photo</h1>
+                        <div className='text-right top-nav'>
+                            {this.createPhotoBtn()}
+                        </div>
+                    </div>
+
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    {this.preloader()}
                     <div className='wrapper'>
                         <h1>Photos List</h1>
                         <div className='text-right top-nav'>
@@ -65,7 +86,7 @@ class PhotoList extends React.Component<any, any> {
                             </tr>
                             </thead>
                             <tbody>
-                            {this.state.photoList
+                            {this.state.photoList.items
                                 .filter((photo: any) => this.state.deleted.indexOf(photo.id) === -1)
                                 .map((photo: any, index: any) =>
                                     <tr key={index}>
@@ -97,20 +118,17 @@ class PhotoList extends React.Component<any, any> {
                     </div>
                 </div>
             );
-        } else {
-            return (
-                <div className='wrapper'>
-                    <h1>Empty list of photo</h1>
-                    <div className='text-right top-nav'>
-                        {this.createPhotoBtn()}
-                    </div>
-                </div>
-            );
         }
     }
 
     private createPhotoBtn() {
         return <Button bsStyle='success'><Link to={'/create-photo'}>Create photo</Link></Button>;
+    }
+
+    private preloader() {
+        if (this.statePreloader) {
+            return <div id='loader-wrapper'><div id='loader'></div></div>;
+        }
     }
 }
 

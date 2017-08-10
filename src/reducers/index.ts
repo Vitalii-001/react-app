@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-import photoList from './photoList';
-import getPhotoById from './getPhotoById';
+import photoList from '../components/PhotoList/reducers/photoList.reducer';
+import getPhotoById from '../components/PhotoView/reducers/getPhotoById.reducer';
 
 import { routerReducer } from 'react-router-redux';
-import createPhoto from './createPhoto';
-import editPhoto from './editPhoto';
-import removePhoto from './removePhoto';
+import createPhoto from '../components/PhotoView/reducers/createPhoto.reducer';
+import editPhoto from '../components/PhotoView/reducers/editPhoto.reducer';
+import removePhoto from '../components/PhotoList/reducers/removePhoto.reducer';
 
 
 export default combineReducers({
