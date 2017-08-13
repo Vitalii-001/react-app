@@ -3,8 +3,33 @@ const morgan = require('morgan');
 const path = require('path');
 const Sequelize = require('sequelize');
 const bodyParser = require('body-parser');
-// const app = express();
+const app = module.exports = express();
 _ = require('lodash');
+
+// import SequelizeFile from 'sequelize-file';
+// const SequelizeFile = require('sequelize-file');
+// import { backgroundImage } from './helpers/attachments';
+
+// const picture = SequelizeFile({
+//     attribute: 'picture',
+//     mimetype: /^image/,
+//     crop: true,
+//     sizes: {
+//         small: 64, //width 64
+//         big: 150, //width 150
+//     }
+// });
+//
+// const backgroundImage = SequelizeFile({
+//     attribute: 'backgroundImage',
+//     mimetype: /^image/,
+//     crop: true,
+//     sizes: {
+//         preview: "x350" // height 350
+//     }
+// });
+
+
 
 sequelize = new Sequelize('sqlite://' + path.join(__dirname, 'database.sqlite'), {
     dialect: 'sqlite',
@@ -40,6 +65,9 @@ Photo = sequelize.define('photos', {
         type: Sequelize.STRING
     }
 });
+//
+// picture.addTo(Photo);
+// backgroundImage.addTo(Photo);
 
 
 sequelize.sync({force: true}).then(() => {
@@ -47,12 +75,11 @@ sequelize.sync({force: true}).then(() => {
         name: "Auto create photo",
         pointer: "sales",
         tooltip: "Text about auto-create photo",
-        preview: ""
+        preview: "https://cdn.pixabay.com/photo/2016/09/01/10/23/image-1635747_960_720.jpg"
     });
 
 }).catch(e => console.log("ERROR SYNCING WITH DB", e));
 
-const app = module.exports = express();
 app.set('port', process.env.PORT || 8000);
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));

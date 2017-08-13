@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import Header from '../Layout/Header/Header';
 import { getPhotoById } from './actions/getPhotoById.action';
 import { editPhoto } from './actions/editPhoto.action';
 import { createPhoto } from './actions/createPhoto.action';
@@ -8,8 +7,12 @@ import { FormControl, Form, FormGroup, ControlLabel, Col, Button } from 'react-b
 import { extend, map } from 'lodash';
 import { Link } from 'react-router-dom';
 import { POINTERS } from '../../_shared/constants/constants';
-import {Photo} from '../../_shared/models/Photo';
+import { PHOTO_FIELDS_VALIDATION } from '../../_shared/validations/validation-rules';
+import { forIn } from 'lodash';
 
+import { createFormValidation } from 'lc-form-validation';
+
+const photoFormValidation = createFormValidation(PHOTO_FIELDS_VALIDATION);
 
 class PhotoView extends React.Component<any, any> {
     private photoId: number;
@@ -18,22 +21,23 @@ class PhotoView extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            photo: new Photo({}),
+            photo: {},
             photoIsCreating: {isCreating: false},
-            photoIsEditing: {isEditing: false}
+            photoIsEditing: {isEditing: false},
+            formErrors: {}
         };
     }
 
     public componentDidMount() {
-        console.log('componentDidMount state', this.state)
         this.photoId = this.props.match.params.id;
         if (this.photoId) {
             this.props.onGetPhotoById(this.props.match.params.id);
         }
     }
 
+
     public componentWillReceiveProps(nextProps: any) {
-        console.log('componentWillReceiveProps', nextProps)
+        console.log(nextProps)
         if (nextProps.photoIsCreating) {
             this.statePreloader = nextProps.photoIsCreating.isCreating;
         }
@@ -43,7 +47,7 @@ class PhotoView extends React.Component<any, any> {
             });
         } else {
             this.setState({
-                photo: new Photo({})
+                photo: {}
             });
         }
         if (nextProps.photoIsEditing) {
@@ -51,8 +55,39 @@ class PhotoView extends React.Component<any, any> {
         }
     }
 
+    public setErrorsToState(errors: any) {
+        errors.forEach((item: any, i: number) => {
+            switch (item.key) {
+                case 'name':
+                    this.setState({
+                        formErrors: extend(this.state.formErrors, {name: item.errorMessage})
+                    });
+                    break;
+                case 'tooltip':
+                    this.setState({
+                        formErrors: extend(this.state.formErrors, {tooltip: item.errorMessage})
+                    });
+                    break;
+                case 'pointer':
+                    this.setState({
+                        formErrors: extend(this.state.formErrors, {pointer: item.errorMessage})
+                    });
+                    break;
+                case 'image':
+                    this.setState({
+                        formErrors: extend(this.state.formErrors, {image: item.errorMessage})
+                    });
+                    break;
+                default:
+                    this.setState({
+                        formErrors: {}
+                    });
+            }
+        });
+    }
+
     public render() {
-        console.log('render', this.props)
+        console.log(this.state)
         return (
             <div>
                 {this.preloader()}
@@ -75,6 +110,7 @@ class PhotoView extends React.Component<any, any> {
                                         value={this.state.photo.name || ''}
                                         onChange={this.handleFullNameChange}
                                         placeholder='Name' />
+                                    <div className='errors'>{this.state.formErrors.name}</div>
                                 </Col>
                             </FormGroup>
 
@@ -89,10 +125,11 @@ class PhotoView extends React.Component<any, any> {
                                         content={this.state.photo.name}
                                         onChange={this.handleFullTooltipChange}
                                         placeholder='Tooltip' />
+                                    <div className='errors'>{this.state.formErrors.tooltip}</div>
                                 </Col>
                             </FormGroup>
 
-                            <FormGroup controlId='formHorizontalTooltip'>
+                            <FormGroup controlId='formHorizontalPointer'>
                                 <Col sm={3}>
                                     <label className='control-label d-b'>Check pointer</label>
                                 </Col>
@@ -110,6 +147,7 @@ class PhotoView extends React.Component<any, any> {
                                             </li>;
                                         })}
                                     </ul>
+                                    <div className='errors'>{this.state.formErrors.pointer}</div>
                                 </Col>
                             </FormGroup>
 
@@ -127,6 +165,7 @@ class PhotoView extends React.Component<any, any> {
                                 </label>
                             </div>
                             <img src={this.state.photo.preview} alt=''/>
+                            {/*<div className='errors'>{this.state.formErrors.preview}</div>*/}
                         </Col>
                     </Form>
                 </div>
@@ -150,6 +189,9 @@ class PhotoView extends React.Component<any, any> {
         const file = e.target.files[0];
         reader.onloadend = () => this.setState({photo: extend(this.state.photo, {preview: reader.result})});
         reader.readAsDataURL(file);
+        if (file) {
+            this.setState({photo: extend(this.state.photo, {file_image: file})});
+        }
     }
 
     private createEditBtn() {
@@ -167,19 +209,38 @@ class PhotoView extends React.Component<any, any> {
     }
 
     private handleSubmit = (e: any) => {
-        e.preventDefault();
-        const params =  {
-            name: this.state.photo.name,
-            tooltip: this.state.photo.tooltip,
-            pointer: this.state.photo.pointer,
-            preview: this.state.photo.preview,
+        const data =  {
+            name: this.state.photo.name || '',
+            tooltip: this.state.photo.tooltip || '',
+            pointer: this.state.photo.pointer || '',
+            preview: this.state.photo.file_image || '',
         };
-        this.props.onCreateEditPhoto(params, this.photoId);
+        const formData = new FormData();
+        forIn(data, (value, key) => formData.append(key, value));
+        console.log(data)
+        photoFormValidation
+            .validateForm(data)
+            .then((validationResult) => {
+                if (validationResult.succeeded) {
+                    this.props.onCreateEditPhoto(data, this.photoId);
+                    console.log('we can now send it to server to validate credentials')
+                    //
+                } else {
+                    console.log(validationResult)
+                    this.setErrorsToState(validationResult.fieldErrors);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                // handle unexpected errors
+            });
+
+
+        e.preventDefault();
     }
 }
 
 function mapStateToProps(state: any) {
-    console.log('state', state)
     return {
         photo: state.getPhotoById,
         photoIsCreating: state.createPhoto,
