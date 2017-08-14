@@ -4,31 +4,9 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const bodyParser = require('body-parser');
 const app = module.exports = express();
+const fs = require('fs');
+const multer = require('multer');
 _ = require('lodash');
-
-// import SequelizeFile from 'sequelize-file';
-// const SequelizeFile = require('sequelize-file');
-// import { backgroundImage } from './helpers/attachments';
-
-// const picture = SequelizeFile({
-//     attribute: 'picture',
-//     mimetype: /^image/,
-//     crop: true,
-//     sizes: {
-//         small: 64, //width 64
-//         big: 150, //width 150
-//     }
-// });
-//
-// const backgroundImage = SequelizeFile({
-//     attribute: 'backgroundImage',
-//     mimetype: /^image/,
-//     crop: true,
-//     sizes: {
-//         preview: "x350" // height 350
-//     }
-// });
-
 
 
 sequelize = new Sequelize('sqlite://' + path.join(__dirname, 'database.sqlite'), {
@@ -65,26 +43,14 @@ Photo = sequelize.define('photos', {
         type: Sequelize.STRING
     }
 });
-//
-// picture.addTo(Photo);
-// backgroundImage.addTo(Photo);
 
-
-sequelize.sync({force: true}).then(() => {
-    return Photo.create({
-        name: "Auto create photo",
-        pointer: "sales",
-        tooltip: "Text about auto-create photo",
-        preview: "https://cdn.pixabay.com/photo/2016/09/01/10/23/image-1635747_960_720.jpg"
-    });
-
-}).catch(e => console.log("ERROR SYNCING WITH DB", e));
 
 app.set('port', process.env.PORT || 8000);
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(bodyParser({limit: '50mb'}));
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser({uploadDir:'./public/uploads'}));
+app.use(multer({dest:__dirname+'/file/uploads/'}).any()); // for parsing multipart/form-data
 
 // PHOTO IP
 app.route('/api/photos')
@@ -94,6 +60,21 @@ app.route('/api/photos')
         })
     })
     .post((req, res) => {
+        const tempPath = req.files[0].path,
+            originalName = req.files[0].originalname,
+            targetPath = path.resolve(`./public/uploads/${originalName}`);
+        if (path.extname(req.files[0].originalname).toLowerCase() === '.jpg') {
+            fs.rename(tempPath, targetPath, function(err) {
+                if (err) throw err;
+            });
+        } else {
+            fs.unlink(tempPath, function () {
+                if (err) throw err;
+                console.error("Only .png files are allowed!");
+            });
+        }
+        req.body.preview = originalName;
+        console.log(req.body);
         let photo = Photo.build(_.pick(req.body, ['name', 'pointer', 'tooltip', 'preview']));
         photo.save().then((photo) => res.json(photo));
     });

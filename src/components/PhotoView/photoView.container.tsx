@@ -161,10 +161,11 @@ class PhotoView extends React.Component<any, any> {
                             <div>
                                 <label className='fileContainer btn btn-warning'>
                                     Upload Photo
-                                    <input type='file' onChange={(e) => this._handleImageChange(e)}/>
+                                    <input type='file' name='preview' onChange={(e) => this._handleImageChange(e)}/>
                                 </label>
                             </div>
-                            <img src={this.state.photo.preview} alt=''/>
+                            {this.setImgPreview()}
+                            {/*<img src={this.state.photo.preview} alt=''/>*/}
                             {/*<div className='errors'>{this.state.formErrors.preview}</div>*/}
                         </Col>
                     </Form>
@@ -180,6 +181,14 @@ class PhotoView extends React.Component<any, any> {
     private preloader() {
         if (this.statePreloader) {
             return <div id='loader-wrapper'><div id='loader'></div></div>;
+        }
+    }
+
+    private setImgPreview() {
+        if (this.props.match.params.id) {
+            return <img src={`/uploads/${this.state.photo.preview}`} alt=''/>;
+        } else {
+            return <img src={this.state.photo.preview} alt=''/>;
         }
     }
 
@@ -213,7 +222,7 @@ class PhotoView extends React.Component<any, any> {
             name: this.state.photo.name || '',
             tooltip: this.state.photo.tooltip || '',
             pointer: this.state.photo.pointer || '',
-            preview: this.state.photo.file_image || '',
+            preview: this.state.photo.file_image || ''
         };
         const formData = new FormData();
         forIn(data, (value, key) => formData.append(key, value));
@@ -222,7 +231,7 @@ class PhotoView extends React.Component<any, any> {
             .validateForm(data)
             .then((validationResult) => {
                 if (validationResult.succeeded) {
-                    this.props.onCreateEditPhoto(data, this.photoId);
+                    this.props.onCreateEditPhoto(formData, this.photoId);
                     console.log('we can now send it to server to validate credentials')
                     //
                 } else {
@@ -254,7 +263,7 @@ export default connect(
         onGetPhotoById: (id: number) => {
             dispatch(getPhotoById(id));
         },
-        onCreateEditPhoto: (data: {}, photoId: number) => {
+        onCreateEditPhoto: (data: any, photoId: number) => {
             if (photoId) {
                 dispatch(editPhoto(data, photoId));
             } else {

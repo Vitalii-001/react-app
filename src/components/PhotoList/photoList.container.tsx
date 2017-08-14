@@ -93,7 +93,7 @@ class PhotoList extends React.Component<any, any> {
                                         <td>{photo.id}</td>
                                         <td>
                                             <Link to={`/photos-list/${photo.id}`}>
-                                                <img width='100px' src={photo.preview} alt=''/>
+                                                <img width='100px' src={`uploads/${photo.preview}`} alt=''/>
                                             </Link>
                                         </td>
                                         <td>
