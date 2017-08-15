@@ -37,7 +37,6 @@ class PhotoView extends React.Component<any, any> {
 
 
     public componentWillReceiveProps(nextProps: any) {
-        console.log(nextProps)
         if (nextProps.photoIsCreating) {
             this.statePreloader = nextProps.photoIsCreating.isCreating;
         }
@@ -87,7 +86,6 @@ class PhotoView extends React.Component<any, any> {
     }
 
     public render() {
-        console.log(this.state)
         return (
             <div>
                 {this.preloader()}
@@ -185,10 +183,12 @@ class PhotoView extends React.Component<any, any> {
     }
 
     private setImgPreview() {
-        if (this.props.match.params.id) {
-            return <img src={`/uploads/${this.state.photo.preview}`} alt=''/>;
-        } else {
+        if (this.props.match.params.id && !this.state.photo.preview) {
+            return <img src={`/uploads/${this.state.photo.file_image}`} alt=''/>;
+        } else if (this.state.photo.preview) {
             return <img src={this.state.photo.preview} alt=''/>;
+        } else {
+            return <img src={this.state.photo.file_image} alt=''/>;
         }
     }
 
@@ -222,20 +222,17 @@ class PhotoView extends React.Component<any, any> {
             name: this.state.photo.name || '',
             tooltip: this.state.photo.tooltip || '',
             pointer: this.state.photo.pointer || '',
-            preview: this.state.photo.file_image || ''
+            file_image: this.state.photo.file_image || ''
         };
         const formData = new FormData();
         forIn(data, (value, key) => formData.append(key, value));
-        console.log(data)
         photoFormValidation
             .validateForm(data)
             .then((validationResult) => {
                 if (validationResult.succeeded) {
                     this.props.onCreateEditPhoto(formData, this.photoId);
-                    console.log('we can now send it to server to validate credentials')
                     //
                 } else {
-                    console.log(validationResult)
                     this.setErrorsToState(validationResult.fieldErrors);
                 }
             })

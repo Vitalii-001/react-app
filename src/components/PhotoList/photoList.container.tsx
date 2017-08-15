@@ -28,7 +28,6 @@ class PhotoList extends React.Component<any, any> {
 
     public componentWillReceiveProps(nextProps: any) {
         this.statePreloader = nextProps.photoList.isLoadingList;
-        console.log(nextProps.photoList)
         if (nextProps.photoList.items) {
             this.setState({
                 photoList: nextProps.photoList,
@@ -45,11 +44,9 @@ class PhotoList extends React.Component<any, any> {
     public removePhoto(photoId: number) {
         this.setState({ deleted: this.state.deleted.concat([photoId]) });
         this.props.onRemovePhoto(photoId);
-        console.log(this.state.deleted);
     }
 
     public render() {
-        console.log(this.state.photoList);
         if (!this.state.photoList.items.length) {
             return (
                 <div>
@@ -93,7 +90,7 @@ class PhotoList extends React.Component<any, any> {
                                         <td>{photo.id}</td>
                                         <td>
                                             <Link to={`/photos-list/${photo.id}`}>
-                                                <img width='100px' src={`uploads/${photo.preview}`} alt=''/>
+                                                <img width='100px' src={`uploads/${photo.file_image}`} alt=''/>
                                             </Link>
                                         </td>
                                         <td>

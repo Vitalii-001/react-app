@@ -3,7 +3,6 @@ import axios from 'axios';
 export const createPhoto = (data: any) =>
     (dispatch: any) => {
         dispatch({type: 'PHOTO_CREATED_LOADING'});
-        console.log(data)
         return axios.post(`/api/photos`, data, {
             headers: {
                 'Content-Type': 'application/json'

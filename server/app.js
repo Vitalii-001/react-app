@@ -39,11 +39,27 @@ Photo = sequelize.define('photos', {
     tooltip: {
         type: Sequelize.STRING
     },
-    preview: {
+    file_image: {
         type: Sequelize.STRING
     }
 });
 
+sequelize.sync({force: true}).then(() => {
+    fs.writeFile("/tmp/test", "Hey there!", function(err) {
+        if(err) {
+            return console.log(err);
+        }
+
+        console.log("The file was saved!");
+    });
+    return Photo.create({
+        name: "Auto create react photo",
+        pointer: "sales",
+        tooltip: "Text about auto-create photo",
+        file_image: "./react-logo.png"
+    });
+
+}).catch(e => console.log("ERROR SYNCING WITH DB", e));
 
 app.set('port', process.env.PORT || 8000);
 app.use(bodyParser.json()); // for parsing application/json
@@ -73,9 +89,8 @@ app.route('/api/photos')
                 console.error("Only .png files are allowed!");
             });
         }
-        req.body.preview = originalName;
-        console.log(req.body);
-        let photo = Photo.build(_.pick(req.body, ['name', 'pointer', 'tooltip', 'preview']));
+        req.body.file_image = originalName;
+        let photo = Photo.build(_.pick(req.body, ['name', 'pointer', 'tooltip', 'file_image']));
         photo.save().then((photo) => res.json(photo));
     });
 
@@ -93,8 +108,24 @@ app.route('/api/photos/:photo_id')
         });
     })
     .put(function(req, res){
+        if (req.files[0]) {
+            const tempPath = req.files[0].path,
+                originalName = req.files[0].originalname,
+                targetPath = path.resolve(`./public/uploads/${originalName}`);
+            if (path.extname(req.files[0].originalname).toLowerCase() === '.jpg') {
+                fs.rename(tempPath, targetPath, function(err) {
+                    if (err) throw err;
+                });
+            } else {
+                fs.unlink(tempPath, function () {
+                    if (err) throw err;
+                    console.error("Only .png files are allowed!");
+                });
+            }
+            req.body.file_image = originalName;
+        }
         Photo.findById(req.params.photo_id).then(function(photo){
-            photo.update(_.pick(req.body, ['name', 'pointer', 'tooltip', 'preview'])).then(function(photo){
+            photo.update(_.pick(req.body, ['name', 'pointer', 'tooltip', 'file_image'])).then(function(photo){
                 res.json(photo);
             });
         });
