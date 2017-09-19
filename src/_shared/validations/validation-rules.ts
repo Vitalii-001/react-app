@@ -12,9 +12,6 @@ export const PHOTO_FIELDS_VALIDATION = {
         ],
         pointer: [
             { validator: Validators.required }
-        ],
-        // preview: [
-        //     { validator: Validators.pattern, customParams: { pattern: MAXSIZE } }
-        // ]
+        ]
     }
 };

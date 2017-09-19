@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toastr } from 'react-redux-toastr';
+import { MASSAGES } from '../../../_shared/constants/constants';
 
 export const editPhoto = (data: any, photoId: number) =>
     (dispatch: any) => {
@@ -10,8 +12,10 @@ export const editPhoto = (data: any, photoId: number) =>
         })
             .then((response: any) => {
                 dispatch({type: 'PHOTO_UPDATED_SUCCESS'});
+                toastr.success('', MASSAGES.EDITED_PHOTO);
             })
             .catch(function (error: any) {
                 console.log(error);
+                toastr.error('', error);
             });
     };

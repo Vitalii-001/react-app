@@ -5,6 +5,7 @@ import PhotoView from './components/PhotoView/photoView.container';
 import PhotoList from './components/PhotoList/photoList.container';
 import { Redirect } from 'react-router';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import ReduxToastr from 'react-redux-toastr';
 
 import Header from './components/Layout/Header/Header';
 
@@ -21,6 +22,13 @@ class App extends React.Component<any, any> {
                         <Route exact path='/create-photo' render={(props) => <PhotoView {...props} />} />
                     </div>
                 </Router>
+                <ReduxToastr
+                    timeOut={4000}
+                    newestOnTop={false}
+                    preventDuplicates
+                    position='top-right'
+                    transitionIn='fadeIn'
+                    transitionOut='fadeOut'/>
             </div>
         );
     }

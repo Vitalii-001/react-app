@@ -7,6 +7,8 @@ import createPhoto from '../components/PhotoView/reducers/createPhoto.reducer';
 import editPhoto from '../components/PhotoView/reducers/editPhoto.reducer';
 import removePhoto from '../components/PhotoList/reducers/removePhoto.reducer';
 
+import {reducer as toastrReducer} from 'react-redux-toastr';
+
 
 export default combineReducers({
     routing: routerReducer,
@@ -15,4 +17,5 @@ export default combineReducers({
     removePhoto,
     createPhoto,
     editPhoto,
-})
+    toastr: toastrReducer
+});
